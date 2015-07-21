@@ -1,0 +1,69 @@
+
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Cong Tuyen
+ * Date: 3/10/2015
+ * Time: 11:08 PM
+ */
+if(isset($_POST['sua'])){
+    $anh='';
+    if($_FILES['anh']['name']!=''){
+        $anh=$_FILES['anh']['name'];
+        move_uploaded_file($_FILES['anh']['tmp_name'], "uploads/".$anh);
+    }else{
+        //lay lai anh cu
+        $dl="SELECT * FROM `baiviet` WHERE id='{$_GET['id']}'";
+        $k=mysql_query($dl);
+        $dl=mysql_fetch_object($k);
+        $anh=$dl->anh;
+    }
+
+    $sua="UPDATE `chuyenmuc` SET `ten`='{$_POST['ten']}',`ghichu`='{$_POST['ghichu']}',
+          `chuyenmuc`='{$_POST['chuyenmuc']}',`sapxep`='{$_POST['sapxep']}' WHERE id={$_GET['id']}";
+    $kq=mysql_query($sua);
+    echo $sua;
+    if($kq)
+        header("location:?tpl=chuyenmuc/ds");
+    else
+        echo "co loi";
+
+}
+$dem=mysql_query("SELECT ten FROM chuyenmuc");
+$dem=mysql_num_rows($dem);
+$dl="SELECT * FROM `chuyenmuc` WHERE id={$_GET['id']}";
+$k=mysql_query($dl);
+$dl=mysql_fetch_array($k);
+?>
+
+<form method="post" enctype="multipart/form-data">
+    <h2>Xin m?i ch?nh s?a:</h2>
+    <div >
+
+        </br>
+        <input type="text" name="ten" value="<?php echo $dl['ten']?>">
+        CHUYÊN M?C CON: </br></br>
+        <input type="text" name="ghichu" value="<?php echo $dl['ghichu']?>">
+        GHI CHÚ: </br></br>
+        <select name="chuyenmuc">
+            <?php
+            $them="SELECT * FROM `chuyenmuc`";
+            $tt=mysql_query($them);
+            while ($them=mysql_fetch_array($tt)) {
+                $sl=($them['id']==$dl['chuyenmuc'])?'selected':'';
+                ?>
+                <option <?php echo $sl ?>   value="<?php echo $them['id'] ?>"><?php echo $them['ten'] ?></option>
+            <?php
+            }
+            ?>
+        </select>
+        CHUYÊN M?C CHA: </br></br>
+        <td>S?p x?p: <input type="number" name="sapxep"
+                            value="<?php echo $them['number'] ?>"> </td>
+        S?P X?P: </br></br>
+
+
+
+    </div>
+    <button type="submit" name="sua">sua</button>
+</form>
